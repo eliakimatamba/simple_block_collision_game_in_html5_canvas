@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Dump Truck Animation</title>
+    <style>
+        body {
+            background: #eee;
+        }
+        
+        #canvas {
+            background: #fff;
+            cursor: pointer;
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <script>
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+
+        var dumpTruck = {
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 50,
+            speed: 5,
+            dx: 0,
+            dy: 0
+        };
+
+        var goal = {
+            x: canvas.width - 100,
+            y: canvas.height - 100,
+            width: 50,
+            height: 50
+        };
+
+        function drawDumpTruck() {
+            ctx.beginPath();
+            ctx.rect(dumpTruck.x, dumpTruck.y, dumpTruck.width, dumpTruck.height);
+            ctx.fillStyle = 'blue';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawGoal() {
+            ctx.beginPath();
+            ctx.rect(goal.x, goal.y, goal.width, goal.height);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function moveDumpTruck() {
+            if (dumpTruck.x + dumpTruck.dx > canvas.width - dumpTruck.width || dumpTruck.x + dumpTruck.dx < 0) {
+                dumpTruck.dx = -dumpTruck.dx;
+            }
+            if (dumpTruck.y + dumpTruck.dy > canvas.height - dumpTruck.height || dumpTruck.y + dumpTruck.dy < 0) {
+                dumpTruck.dy = -dumpTruck.dy;
+            }
+
+            dumpTruck.x += dumpTruck.dx;
+            dumpTruck.y += dumpTruck.dy;
+        }
+
+        function checkCollision(rect1, rect2) {
+            return (
+                rect1.x < rect2.x + rect2.width &&
+                rect1.x + rect1.width > rect2.x &&
+                rect1.y < rect2.y + rect2.height &&
+                rect1.y + rect1.height > rect2.y
+            );
+        }
+
+        function checkGoal() {
+            if (checkCollision(dumpTruck, goal)) {
+                alert('YOU WON!');
+                document.location.reload();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            moveDumpTruck();
+            checkGoal();
+            drawDumpTruck();
+            drawGoal();
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        canvas.addEventListener('mousemove', function(e) {
+            dumpTruck.dx = e.offsetX - dumpTruck.x;
+            dumpTruck.dy = e.offsetY - dumpTruck.y;
+        });
+
+        canvas.addEventListener('click', function(e) {
+            dumpTruck.x = e.offsetX - dumpTruck.width / 2;
+            dumpTruck.y = e.offsetY - dumpTruck.height / 2;
+        });
+
+    </script>
+</body>
+
+</html>
+
